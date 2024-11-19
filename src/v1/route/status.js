@@ -2,8 +2,12 @@ const express = require('express');
 const route = express.Router();
 
 const { statusC } = require('../controller');
+const {
+	authorizationM: { hasAuthority, hasAnyAuthority },
+	authenticationM: { authenticated },
+} = require('../middleware');
 
-route.post('/', statusC.save);
+route.post('/', authenticated, hasAnyAuthority(['UPDATE', 'CREATE']), statusC.save);
 route.get('/', statusC.findAll);
 route.get('/search', statusC.findAllBy);
 route.get('/archived', statusC.findAllArchived);

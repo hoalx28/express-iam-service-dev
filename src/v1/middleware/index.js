@@ -1,3 +1,4 @@
 const authenticationM = require('./authentication');
+const authorizationM = require('./authorization');
 
-module.exports = { authenticationM };
+module.exports = { authenticationM, authorizationM };

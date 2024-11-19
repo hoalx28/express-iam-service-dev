@@ -1,13 +1,12 @@
 const { Failed } = require('../constant');
 const { badCredentialS } = require('../service');
-const response = require('../response');
+const ServiceExc = require('../exception');
 
 const authenticated = async (req, res, next) => {
 	try {
 		const header = req.header('Authorization');
 		if (!header) {
-			response.doErrorWith(res, Failed.MissingAuthorizationHeaderF);
-			return;
+			throw new ServiceExc(Failed.MissingAuthorizationHeaderF);
 		}
 		const accessToken = header.replace('Bearer ', '');
 		const claims = await badCredentialS.ensureNotBadCredential(accessToken);
