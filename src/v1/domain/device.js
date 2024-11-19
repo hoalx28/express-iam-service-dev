@@ -21,7 +21,6 @@ const device = sequelize.define(
 		createdAt: 'createdAt',
 		updatedAt: 'updatedAt',
 		deletedAt: 'deletedAt',
-		underscored: true,
 	},
 );
 

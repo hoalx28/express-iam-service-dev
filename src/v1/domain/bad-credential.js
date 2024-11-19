@@ -2,21 +2,25 @@ const {
 	sequelizeClt: { sequelize, DataTypes },
 } = require('../client');
 
-const user = sequelize.define(
-	'user',
+const badCredential = sequelize.define(
+	'badCredential',
 	{
-		username: {
+		accessTokenId: {
 			type: DataTypes.STRING,
 			allowNull: false,
 			unique: true,
 		},
-		password: {
-			type: DataTypes.STRING,
+		accessTokenExpiredAt: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+		},
+		userId: {
+			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
 	},
 	{
-		tableName: 'users',
+		tableName: 'bad_credential',
 		paranoid: true,
 		createdAt: 'createdAt',
 		updatedAt: 'updatedAt',
@@ -24,4 +28,4 @@ const user = sequelize.define(
 	},
 );
 
-module.exports = user;
+module.exports = badCredential;

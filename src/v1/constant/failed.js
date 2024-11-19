@@ -182,7 +182,7 @@ module.exports = Object.freeze({
 	},
 	EnsureTokenNotBadCredentialF: {
 		code: 228,
-		msg: 'can not ensure token is not recall.',
+		msg: 'can not ensure token is not recalled.',
 		httpCode: StatusCodes.UNAUTHORIZED,
 	},
 	TokenBlockedF: {
@@ -208,7 +208,7 @@ module.exports = Object.freeze({
 
 	MissingAuthorizationHeaderF: {
 		code: 233,
-		msg: 'unauthorized: missing authorization header in header list.',
+		msg: 'unauthorized: missing authorization or x-refresh-token header in header list.',
 		httpCode: StatusCodes.UNAUTHORIZED,
 	},
 	UnauthorizedF: {

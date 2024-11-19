@@ -1,10 +1,10 @@
-function newResponse(code, httpCode, msg, payload) {
+const newResponse = (code, httpCode, msg, payload) => {
 	return { timestamp: Date.now(), code, httpCode, msg, payload };
-}
+};
 
-function newPagingResponse(code, httpCode, msg, payload, paging) {
+const newPagingResponse = (code, httpCode, msg, payload, paging) => {
 	return { timestamp: Date.now(), code, httpCode, msg, payload, paging };
-}
+};
 
 const doSuccess = (res, constant, payload) => {
 	const response = newResponse(constant.code, constant.httpCode, constant.msg, payload);

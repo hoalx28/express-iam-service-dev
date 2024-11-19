@@ -2,7 +2,7 @@ const { Op } = require('sequelize');
 
 const { device, user } = require('../domain');
 
-const existByIpAddress = async (ipAddress) => (await device.count({ paranoid: true, where: { ip_address: ipAddress } })) > 0;
+const existByIpAddress = async (ipAddress) => (await device.count({ paranoid: true, where: { ipAddress } })) > 0;
 
 const save = async (model) => await device.create(model);
 
@@ -17,7 +17,7 @@ const findById = async (id) =>
 
 const findByUserId = async (userId) =>
 	await device.findOne({
-		where: { user_id: userId },
+		where: { userId },
 		include: {
 			model: user,
 			attributes: ['username'],
@@ -47,7 +47,7 @@ const findAllBy = async ({ page, size, userAgent = '' }) => {
 	const { rows, count } = await device.findAndCountAll({
 		limit: size,
 		offset,
-		where: { user_agent: { [Op.iLike]: `%${userAgent}%` } },
+		where: { userAgent: { [Op.iLike]: `%${userAgent}%` } },
 		include: {
 			model: user,
 			attributes: ['username'],

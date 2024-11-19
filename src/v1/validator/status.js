@@ -1,33 +1,31 @@
 const Joi = require('joi');
 
-const { ServiceExc } = require('../exception');
 const { Failed } = require('../constant');
+const ServiceExc = require('../exception');
 
-const statusCreation = Joi.object({
+const creation = Joi.object({
 	content: Joi.string().required(),
 	userId: Joi.number().required(),
 });
 
-const statusUpdate = Joi.object({
+const update = Joi.object({
 	content: Joi.string(),
 });
 
-const creationValidate = async (creation) => {
+const whenCreate = async (model) => {
 	try {
-		await statusCreation.validateAsync(creation);
+		await creation.validateAsync(model);
 	} catch (error) {
-		const badRequest = Failed.RequestBodyNotReadableF;
-		throw new ServiceExc(error.message, badRequest);
+		throw new ServiceExc(Failed.RequestBodyNotReadableF, error.message.replaceAll('"', ''));
 	}
 };
 
-const updateValidate = async (update) => {
+const whenUpdate = async (model) => {
 	try {
-		await statusUpdate.validateAsync(update);
+		await update.validateAsync(update);
 	} catch (error) {
-		const badRequest = Failed.RequestBodyNotReadableF;
-		throw new ServiceExc(error.message, badRequest);
+		throw new ServiceExc(Failed.RequestBodyNotReadableF, error.message.replaceAll('"', ''));
 	}
 };
 
-module.exports = { creationValidate, updateValidate };
+module.exports = { whenCreate, whenUpdate };

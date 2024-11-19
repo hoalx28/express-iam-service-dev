@@ -1,7 +1,5 @@
 const asResponse = (model) => {
-	const raw = model.toJSON();
-	delete raw.deletedAt;
-	delete raw.user_id;
+	const { userId, deletedAt, createdAt, updatedAt, ...raw } = model.toJSON();
 	return raw;
 };
 

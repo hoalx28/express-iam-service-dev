@@ -4,21 +4,19 @@ const { Failed } = require('../constant');
 const { deviceV, pageableV } = require('../validator');
 const { deviceRE, userRE } = require('../repository');
 const { deviceM } = require('../mapper');
-const { ServiceExc } = require('../exception');
+const ServiceExc = require('../exception');
 
 const ensureNotExistedByIpAddress = async (ipAddress) => {
 	const isExisted = await deviceRE.existByIpAddress(ipAddress);
 	if (isExisted) {
-		const existed = Failed.AlreadyExistedF;
-		throw new ServiceExc(existed.msg, existed);
+		throw new ServiceExc(Failed.AlreadyExistedF);
 	}
 };
 
 const ensureExistedById = async (id) => {
 	const old = await deviceRE.findById(id);
 	if (_.isEmpty(old)) {
-		const notExisted = Failed.NotExistedF;
-		throw new ServiceExc(notExisted.msg, notExisted);
+		throw new ServiceExc(Failed.NotExistedF);
 	}
 	return old;
 };
@@ -26,8 +24,7 @@ const ensureExistedById = async (id) => {
 const ensureOwningExistedById = async (id) => {
 	const owning = await userRE.findById(id);
 	if (_.isNull(owning)) {
-		const notExisted = Failed.OwningSideNotExistedF;
-		throw new ServiceExc(notExisted.msg, notExisted);
+		throw new ServiceExc(Failed.OwningSideNotExistedF);
 	}
 	return owning;
 };
@@ -35,14 +32,14 @@ const ensureOwningExistedById = async (id) => {
 const ensureOwningAvailableById = async (owningId) => {
 	const owning = await deviceRE.findByUserId(owningId);
 	if (!_.isNull(owning)) {
-		const notAvailable = Failed.OwningSideNotAvailableF;
-		throw new ServiceExc(notAvailable.msg, notAvailable);
+		throw new ServiceExc(Failed.OwningSideNotAvailableF);
 	}
 	return owning;
 };
 
 const save = async (creation) => {
 	try {
+		await deviceV.whenCreate(creation);
 		await ensureNotExistedByIpAddress(creation.ipAddress);
 		const owning = await ensureOwningExistedById(creation.userId);
 		await ensureOwningAvailableById(creation.userId);
@@ -55,8 +52,7 @@ const save = async (creation) => {
 		if (error instanceof ServiceExc) {
 			throw error;
 		}
-		const saved = Failed.SaveF;
-		throw new ServiceExc(saved.msg, saved);
+		throw new ServiceExc(Failed.SaveF);
 	}
 };
 
@@ -64,8 +60,7 @@ const findById = async (id) => {
 	try {
 		const queried = await deviceRE.findById(id);
 		if (_.isNull(queried)) {
-			const noContent = Failed.FindByIdNoContentF;
-			throw new ServiceExc(noContent.msg, noContent);
+			throw new ServiceExc(Failed.FindByIdNoContentF);
 		}
 		const response = deviceM.asResponse(queried);
 		return response;
@@ -74,8 +69,7 @@ const findById = async (id) => {
 		if (error instanceof ServiceExc) {
 			throw error;
 		}
-		const queried = Failed.FindByIdF;
-		throw new ServiceExc(queried.msg, queried);
+		throw new ServiceExc(Failed.FindByIdF);
 	}
 };
 
@@ -84,8 +78,7 @@ const findAll = async ({ page, size }) => {
 		await pageableV.validate({ page, size });
 		const { rows: queried, paging } = await deviceRE.findAll({ page, size });
 		if (_.isEmpty(queried)) {
-			const noContent = Failed.FindAllNoContentF;
-			throw new ServiceExc(noContent.msg, noContent);
+			throw new ServiceExc(Failed.FindAllNoContentF);
 		}
 		const response = deviceM.asCollectionResponse(queried);
 		return { response, paging };
@@ -94,18 +87,16 @@ const findAll = async ({ page, size }) => {
 		if (error instanceof ServiceExc) {
 			throw error;
 		}
-		const queried = Failed.FindAllF;
-		throw new ServiceExc(queried.msg, queried);
+		throw new ServiceExc(Failed.FindAllF);
 	}
 };
 
-const findAllBy = async ({ page, size, content = '' }) => {
+const findAllBy = async ({ page, size, userAgent = '' }) => {
 	try {
 		await pageableV.validate({ page, size });
-		const { rows: queried, paging } = await deviceRE.findAllBy({ page, size, content });
+		const { rows: queried, paging } = await deviceRE.findAllBy({ page, size, userAgent });
 		if (_.isEmpty(queried)) {
-			const noContent = Failed.FindAllByNoContentF;
-			throw new ServiceExc(noContent.msg, noContent);
+			throw new ServiceExc(Failed.FindAllByNoContentF);
 		}
 		const response = deviceM.asCollectionResponse(queried);
 		return { response, paging };
@@ -114,8 +105,7 @@ const findAllBy = async ({ page, size, content = '' }) => {
 		if (error instanceof ServiceExc) {
 			throw error;
 		}
-		const queried = Failed.FindAllByF;
-		throw new ServiceExc(queried.msg, queried);
+		throw new ServiceExc(Failed.FindAllByF);
 	}
 };
 
@@ -124,8 +114,7 @@ const findAllArchived = async ({ page, size }) => {
 		await pageableV.validate({ page, size });
 		const { rows: queried, paging } = await deviceRE.findAllArchived({ page, size });
 		if (_.isEmpty(queried)) {
-			const noContent = Failed.FindAllByNoContentF;
-			throw new ServiceExc(noContent.msg, noContent);
+			throw new ServiceExc(Failed.FindAllByNoContentF);
 		}
 		const response = deviceM.asCollectionResponse(queried);
 		return { response, paging };
@@ -134,14 +123,13 @@ const findAllArchived = async ({ page, size }) => {
 		if (error instanceof ServiceExc) {
 			throw error;
 		}
-		const queried = Failed.FindAllArchivedF;
-		throw new ServiceExc(queried.msg, queried);
+		throw new ServiceExc(Failed.FindAllArchivedF);
 	}
 };
 
 const update = async (id, update) => {
 	try {
-		await deviceV.updateValidate(update);
+		await deviceV.whenUpdate(update);
 		const old = await ensureExistedById(id);
 		await deviceRE.update(id, update);
 		const response = deviceM.asResponse(old);
@@ -151,8 +139,7 @@ const update = async (id, update) => {
 		if (error instanceof ServiceExc) {
 			throw error;
 		}
-		const queried = Failed.UpdateF;
-		throw new ServiceExc(queried.msg, queried);
+		throw new ServiceExc(Failed.UpdateF);
 	}
 };
 
@@ -167,8 +154,7 @@ const remove = async (id) => {
 		if (error instanceof ServiceExc) {
 			throw error;
 		}
-		const queried = Failed.DeleteF;
-		throw new ServiceExc(queried.msg, queried);
+		throw new ServiceExc(Failed.DeleteF);
 	}
 };
 

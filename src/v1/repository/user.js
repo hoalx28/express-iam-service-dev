@@ -22,6 +22,23 @@ const findById = async (id) =>
 		},
 	});
 
+const findByUsername = async (username) =>
+	await user.findOne({
+		where: { username },
+		include: {
+			model: role,
+			include: {
+				model: privilege,
+				through: { attributes: [] },
+				attributes: ['name', 'description'],
+				as: 'privileges',
+			},
+			through: { attributes: [] },
+			attributes: ['name', 'description'],
+			as: 'roles',
+		},
+	});
+
 const findAllById = async (ids) => await user.findAll({ where: { id: { [Op.in]: ids } } });
 
 const findAll = async ({ page, size }) => {
@@ -101,6 +118,7 @@ module.exports = {
 	existByUsername,
 	save,
 	findById,
+	findByUsername,
 	findAllById,
 	findAll,
 	findAllBy,

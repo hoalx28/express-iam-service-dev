@@ -1,5 +1,8 @@
-const makeAssociation = (...args) => {
+const bcrypt = require('bcrypt');
+
+const doAssociation = (...args) => {
 	const [privilege, role, user, device, status] = args;
+
 	privilege.belongsToMany(role, {
 		through: 'privilege_roles',
 		foreignKey: 'privilege_id',
@@ -10,7 +13,6 @@ const makeAssociation = (...args) => {
 		foreignKey: 'role_id',
 		as: 'privileges',
 	});
-
 	role.belongsToMany(user, {
 		through: 'role_users',
 		foreignKey: 'role_id',
@@ -29,4 +31,19 @@ const makeAssociation = (...args) => {
 	device.belongsTo(user, { foreignKey: 'user_id', as: 'user' });
 };
 
-module.exports = makeAssociation;
+const doHooks = (...args) => {
+	const [user] = args;
+
+	user.beforeCreate(async (user, options) => {
+		user.password = await bcrypt.hash(user.password, 10);
+	});
+	user.beforeUpdate(async (user, options) => {
+		const bcryptPattern = /^\$2[ayb]\$.{56}$/;
+		const isEncryptPassword = bcryptPattern.test(user.password);
+		if (!isEncryptPassword) {
+			user.password = await bcrypt.hash(user.password, 10);
+		}
+	});
+};
+
+module.exports = { doAssociation, doHooks };

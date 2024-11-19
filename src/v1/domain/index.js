@@ -3,8 +3,10 @@ const role = require('./role');
 const user = require('./user');
 const device = require('./device');
 const status = require('./status');
-const makeAssociation = require('./association');
+const badCredential = require('./bad-credential');
+const { doAssociation, doHooks } = require('./setup');
 
-makeAssociation(privilege, role, user, device, status);
+doAssociation(privilege, role, user, device, status);
+doHooks(user);
 
-module.exports = { privilege, role, user, device, status };
+module.exports = { privilege, role, user, device, status, badCredential };

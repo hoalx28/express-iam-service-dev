@@ -1,6 +1,6 @@
 class ServiceExc extends Error {
-	constructor(message, failed) {
-		super(message);
+	constructor(failed, msg = undefined) {
+		msg ? super(msg) : super(failed.msg);
 		this.failed = failed;
 	}
 }

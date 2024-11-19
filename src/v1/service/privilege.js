@@ -4,28 +4,26 @@ const { Failed } = require('../constant');
 const { privilegeV, pageableV } = require('../validator');
 const { privilegeRE } = require('../repository');
 const { privilegeM } = require('../mapper');
-const { ServiceExc } = require('../exception');
+const ServiceExc = require('../exception');
 
 const ensureNotExistedByName = async (name) => {
 	const isExisted = await privilegeRE.existByName(name);
 	if (isExisted) {
-		const existed = Failed.AlreadyExistedF;
-		throw new ServiceExc(existed.msg, existed);
+		throw new ServiceExc(Failed.AlreadyExistedF);
 	}
 };
 
 const ensureExistedById = async (id) => {
 	const old = await privilegeRE.findById(id);
 	if (_.isEmpty(old)) {
-		const notExisted = Failed.NotExistedF;
-		throw new ServiceExc(notExisted.msg, notExisted);
+		throw new ServiceExc(Failed.NotExistedF);
 	}
 	return old;
 };
 
 const save = async (creation) => {
 	try {
-		await privilegeV.creationValidate(creation);
+		await privilegeV.whenCreate(creation);
 		await ensureNotExistedByName(creation.name);
 		const saved = await privilegeRE.save(creation);
 		const response = privilegeM.asResponse(saved);
@@ -35,8 +33,7 @@ const save = async (creation) => {
 		if (error instanceof ServiceExc) {
 			throw error;
 		}
-		const saved = Failed.SaveF;
-		throw new ServiceExc(saved.msg, saved);
+		throw new ServiceExc(Failed.SaveF);
 	}
 };
 
@@ -44,8 +41,7 @@ const findById = async (id) => {
 	try {
 		const queried = await privilegeRE.findById(id);
 		if (_.isNull(queried)) {
-			const noContent = Failed.FindByIdNoContentF;
-			throw new ServiceExc(noContent.msg, noContent);
+			throw new ServiceExc(Failed.FindByIdNoContentF);
 		}
 		const response = privilegeM.asResponse(queried);
 		return response;
@@ -54,8 +50,7 @@ const findById = async (id) => {
 		if (error instanceof ServiceExc) {
 			throw error;
 		}
-		const queried = Failed.FindByIdF;
-		throw new ServiceExc(queried.msg, queried);
+		throw new ServiceExc(Failed.FindByIdF);
 	}
 };
 
@@ -64,8 +59,7 @@ const findAll = async ({ page, size }) => {
 		await pageableV.validate({ page, size });
 		const { rows: queried, paging } = await privilegeRE.findAll({ page, size });
 		if (_.isEmpty(queried)) {
-			const noContent = Failed.FindAllNoContentF;
-			throw new ServiceExc(noContent.msg, noContent);
+			throw new ServiceExc(Failed.FindAllNoContentF);
 		}
 		const response = privilegeM.asCollectionResponse(queried);
 		return { response, paging };
@@ -74,8 +68,7 @@ const findAll = async ({ page, size }) => {
 		if (error instanceof ServiceExc) {
 			throw error;
 		}
-		const queried = Failed.FindAllF;
-		throw new ServiceExc(queried.msg, queried);
+		throw new ServiceExc(Failed.FindAllF);
 	}
 };
 
@@ -84,8 +77,7 @@ const findAllBy = async ({ page, size, name = '' }) => {
 		await pageableV.validate({ page, size });
 		const { rows: queried, paging } = await privilegeRE.findAllBy({ page, size, name });
 		if (_.isEmpty(queried)) {
-			const noContent = Failed.FindAllByNoContentF;
-			throw new ServiceExc(noContent.msg, noContent);
+			throw new ServiceExc(Failed.FindAllByNoContentF);
 		}
 		const response = privilegeM.asCollectionResponse(queried);
 		return { response, paging };
@@ -94,8 +86,7 @@ const findAllBy = async ({ page, size, name = '' }) => {
 		if (error instanceof ServiceExc) {
 			throw error;
 		}
-		const queried = Failed.FindAllByF;
-		throw new ServiceExc(queried.msg, queried);
+		throw new ServiceExc(Failed.FindAllByF);
 	}
 };
 
@@ -104,8 +95,7 @@ const findAllArchived = async ({ page, size }) => {
 		await pageableV.validate({ page, size });
 		const { rows: queried, paging } = await privilegeRE.findAllArchived({ page, size });
 		if (_.isEmpty(queried)) {
-			const noContent = Failed.FindAllByNoContentF;
-			throw new ServiceExc(noContent.msg, noContent);
+			throw new ServiceExc(Failed.FindAllByNoContentF);
 		}
 		const response = privilegeM.asCollectionResponse(queried);
 		return { response, paging };
@@ -114,14 +104,13 @@ const findAllArchived = async ({ page, size }) => {
 		if (error instanceof ServiceExc) {
 			throw error;
 		}
-		const queried = Failed.FindAllArchivedF;
-		throw new ServiceExc(queried.msg, queried);
+		throw new ServiceExc(Failed.FindAllArchivedF);
 	}
 };
 
 const update = async (id, update) => {
 	try {
-		await privilegeV.updateValidate(update);
+		await privilegeV.whenUpdate(update);
 		const old = await ensureExistedById(id);
 		await privilegeRE.update(id, update);
 		const response = privilegeM.asResponse(old);
@@ -131,8 +120,7 @@ const update = async (id, update) => {
 		if (error instanceof ServiceExc) {
 			throw error;
 		}
-		const queried = Failed.UpdateF;
-		throw new ServiceExc(queried.msg, queried);
+		throw new ServiceExc(Failed.UpdateF);
 	}
 };
 
@@ -147,8 +135,7 @@ const remove = async (id) => {
 		if (error instanceof ServiceExc) {
 			throw error;
 		}
-		const queried = Failed.DeleteF;
-		throw new ServiceExc(queried.msg, queried);
+		throw new ServiceExc(Failed.DeleteF);
 	}
 };
 

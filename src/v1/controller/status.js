@@ -1,6 +1,6 @@
 const { statusS } = require('../service');
-const { response } = require('../response');
 const { Success } = require('../constant');
+const response = require('../response');
 
 const save = async (req, res, next) => {
 	try {

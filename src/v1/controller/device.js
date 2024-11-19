@@ -1,6 +1,6 @@
 const { deviceS } = require('../service');
-const { response } = require('../response');
 const { Success } = require('../constant');
+const response = require('../response');
 
 const save = async (req, res, next) => {
 	try {
@@ -35,8 +35,8 @@ const findAll = async (req, res, next) => {
 
 const findAllBy = async (req, res, next) => {
 	try {
-		const { page, size, content = '' } = req.query;
-		const { response: queried, paging } = await deviceS.findAllBy({ page, size, content });
+		const { page, size, userAgent = '' } = req.query;
+		const { response: queried, paging } = await deviceS.findAllBy({ page, size, userAgent });
 		response.doSuccessPaging(res, Success.FindAllByS, queried, paging);
 	} catch (error) {
 		next(error);
