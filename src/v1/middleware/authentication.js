@@ -1,8 +1,19 @@
 const { Failed } = require('../constant');
 const { badCredentialS } = require('../service');
 const ServiceExc = require('../exception');
+const passport = require('passport');
 
-const authenticated = async (req, res, next) => {
+const jwtAuthenticated = (req, res, next) => {
+	passport.authenticate('jwt', { session: false }, (err, user, info) => {
+		if (info) {
+			next(new ServiceExc(Failed.UnauthorizedF));
+		}
+		req.user = user;
+		next();
+	})(req, res, next);
+};
+
+const authenticate = async (req, res, next) => {
 	try {
 		const header = req.header('Authorization');
 		if (!header) {
@@ -25,4 +36,4 @@ const authenticated = async (req, res, next) => {
 	}
 };
 
-module.exports = { authenticated };
+module.exports = { jwtAuthenticated, authenticate };

@@ -9,6 +9,7 @@ const main = async () => {
 	await appCfg.dbConfig();
 	appCfg.secConfig(app);
 	appCfg.parseBodyConfig(app);
+	appCfg.passportConfig();
 	appCfg.routeConfig(app);
 	appCfg.recoveryConfig(app);
 	app.listen(PORT);

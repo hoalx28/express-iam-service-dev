@@ -1,6 +1,5 @@
 const { Success, Failed } = require('../constant');
-const { authS, badCredentialS, userS } = require('../service');
-const { jwtProvider } = require('../token');
+const { authS, badCredentialS } = require('../service');
 const response = require('../response');
 const ServiceExc = require('../exception');
 
@@ -42,7 +41,7 @@ const identity = async (req, res, next) => {
 
 const me = async (req, res, next) => {
 	try {
-		const { username } = req.user;
+		const { sub: username } = req.user;
 		const user = await authS.me(username);
 		response.doSuccess(res, Success.RetrieveProfileS, user);
 	} catch (error) {

@@ -6,6 +6,7 @@ const {
 } = require('./client');
 const { privilegeRO, roleRO, userRO, statusRO, deviceRO, authRO } = require('./route');
 const { Failed } = require('./constant');
+const passportProvider = require('./passport');
 const response = require('./response');
 const ServiceExc = require('./exception');
 
@@ -39,6 +40,10 @@ const parseBodyConfig = (app) => {
 	});
 };
 
+const passportConfig = () => {
+	passportProvider.jwtCfg();
+};
+
 const routeConfig = (app) => {
 	app.use('/api/v1/privileges', privilegeRO);
 	app.use('/api/v1/roles', roleRO);
@@ -57,8 +62,9 @@ const recoveryConfig = (app) => {
 			response.doError(res, err);
 			return;
 		}
+		console.log(`Error: ${err.message}`);
 		response.doErrorWith(res, Failed.UncategorizedF);
 	});
 };
 
-module.exports = { dbConfig, secConfig, parseBodyConfig, routeConfig, recoveryConfig };
+module.exports = { dbConfig, secConfig, parseBodyConfig, passportConfig, routeConfig, recoveryConfig };

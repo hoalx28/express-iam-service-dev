@@ -3,7 +3,7 @@ const _ = require('lodash');
 const { Failed } = require('../constant');
 const { badCredentialRE } = require('../repository');
 const { badCredentialM } = require('../mapper');
-const { jwtProvider } = require('../token');
+const { jwtProvider } = require('../auth');
 
 const ServiceExc = require('../exception');
 

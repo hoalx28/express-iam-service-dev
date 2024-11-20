@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 
 const { Failed } = require('../constant');
 const { authM } = require('../mapper');
-const { jwtProvider } = require('../token');
+const { jwtProvider } = require('../auth');
 const ServiceExc = require('../exception');
 const userS = require('../service/user');
 const badCredentialS = require('./bad-credential');
